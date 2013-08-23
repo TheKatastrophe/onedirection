@@ -6,6 +6,8 @@ include('include/simple_html_dom.php');
 $here = preg_replace("/^".preg_replace("/\//", '\/',preg_replace("/(?:^\/|\/$)/", '', $URLbase))."\//", '', preg_replace("/(?:^\/|\/$)/", '', $_SERVER['REQUEST_URI']));
 $url = explode("/", $here);
 
+$template = file_get_html($template);
+
 if($networks[$url[0]]){
 	if($networks[$url[0]]['type'] == "tumblr"){
 		$url = $networks[$url[0]]['url']."/post/".$url[1];
@@ -19,7 +21,7 @@ if($networks[$url[0]]){
 			$a->setAttribute('target', '');
 		}
 
-		echo $page->innertext;
+		$body = $page->innertext;
 	}elseif($networks[$url[0]]['type'] == "twitter"){
 		$url = $networks[$url[0]]['url']."/status/".$url[1];
 		$page = @file_get_html($url);
@@ -30,8 +32,12 @@ if($networks[$url[0]]){
 			$a->innertext = '';
 		}
 
-		echo $page->innertext;
+		$body = $page->innertext;
 	}
+
+	$template->find('#1d-title', 0)->innertext = "Title";
+	$template->find('#1d-body', 0)->innertext = $body;
+	echo $template->innertext;
 }else{
 	fileNotFound();
 }

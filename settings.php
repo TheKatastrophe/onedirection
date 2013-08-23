@@ -2,6 +2,8 @@
 
 $URLbase = "/social/";
 
+$template = "template.htm";
+
 $networks = array(
 	"tumblr" => array(
 		"url" => "http://something.tumblr.com",
