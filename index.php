@@ -21,7 +21,16 @@ if($networks[$url[0]]){
 
 		echo $page->innertext;
 	}elseif($networks[$url[0]]['type'] == "twitter"){
+		$url = $networks[$url[0]]['url']."/status/".$url[1];
+		$page = @file_get_html($url);
+		$html = $page->find('p.tweet-text', 0);
+		$page = str_get_html($html);
+		$attribs = $page->find('span.tco-ellipsis');
+		foreach($attribs as $a){
+			$a->innertext = '';
+		}
 
+		echo $page->innertext;
 	}
 }else{
 	fileNotFound();
