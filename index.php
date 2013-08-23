@@ -15,12 +15,16 @@ if($networks[$url[0]]){
 		if(!$page){ fileNotFound(); }
 		$html = $page->find('div.post', 0);
 		$page = str_get_html($html);
-		$attribs = $page->find('a');
+		$attribs = $page->find('div.postmeta a');
 		foreach($attribs as $a){
 			$a->setAttribute('href', '#');
 			$a->setAttribute('target', '');
 		}
 
+		$title = $page->find('h3', 0)->innertext;
+		$page->find('h3', 0)->innertext = '';
+		$tags = $page->find('p.tags', 0)->innertext;
+		$page->find('p.tags', 0)->innertext = "Tagged: ".$tags;
 		$body = $page->innertext;
 	}elseif($networks[$url[0]]['type'] == "twitter"){
 		$url = $networks[$url[0]]['url']."/status/".$url[1];
@@ -31,11 +35,17 @@ if($networks[$url[0]]){
 		foreach($attribs as $a){
 			$a->innertext = '';
 		}
+		$attribs = $page->find('span.invisible');
+		foreach($attribs as $a){
+			$a->setAttribute('class', '');
+		}
 
 		$body = $page->innertext;
 	}
 
-	$template->find('#1d-title', 0)->innertext = "Title";
+	if($title){
+		$template->find('#1d-title', 0)->innertext = $title;
+	}
 	$template->find('#1d-body', 0)->innertext = $body;
 	echo $template->innertext;
 }else{
